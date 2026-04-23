@@ -40,23 +40,26 @@ export default defineConfig({
     {
     name: 'api',
     testDir: './tests/api',
-    use: {}
+    use: {
+      browserName: undefined, // no browser needed
     },
-    
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
+  },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+  {
+    name: 'chromium',
+    testDir: './tests/ui',
+    use: { browserName: 'chromium' },
+  },
+  {
+    name: 'firefox',
+    testDir: './tests/ui',
+    use: { browserName: 'firefox' },
+  },
+  {
+    name: 'webkit',
+    testDir: './tests/ui',
+    use: { browserName: 'webkit' },
+  },
 
     /* Test against mobile viewports. */
     // {

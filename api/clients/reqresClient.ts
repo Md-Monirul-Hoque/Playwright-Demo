@@ -1,84 +1,89 @@
 import { APIRequestContext, APIResponse } from '@playwright/test';
 
-export interface CreateUserPayload {
+export interface ProductPayload {
   name: string;
-  job: string;
-}
-
-export interface LoginPayload {
-  email: string;
-  password: string;
+  price: number;
 }
 
 export class ReqResClient {
   private baseURL = process.env.API_BASE_URL || 'https://reqres.in/api';
+  private projectId = process.env.REQRES_PROJECT_ID || '14563';
 
   constructor(private request: APIRequestContext) {}
 
   // -------------------------------
-  // COMMON HEADERS
+  // HEADERS
   // -------------------------------
-  private getHeaders() {
+
+  private getPublicHeaders() {
     return {
-      'x-api-key': process.env.REQRES_API_KEY || '', // set in .env
+      'x-api-key': process.env.REQRES_PUBLIC_KEY!,
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+  }
+
+  private getManageHeaders() {
+    return {
+      'x-api-key': process.env.REQRES_MANAGE_KEY!,
+      'X-Reqres-Env': 'production',
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
     };
   }
 
   // -------------------------------
-  // USERS
+  // ENDPOINT
   // -------------------------------
 
-  async getUsers(page = 2): Promise<APIResponse> {
-    return this.request.get(`${this.baseURL}/users?page=${page}`, {
-      headers: this.getHeaders(),
+  private get productsEndpoint() {
+    return `${this.baseURL}/collections/products/records?project_id=${this.projectId}`;
+  }
+
+  // -------------------------------
+  // READ (PUBLIC KEY)
+  // -------------------------------
+
+  async getProducts(): Promise<APIResponse> {
+    return this.request.get(this.productsEndpoint, {
+      headers: this.getPublicHeaders(),
     });
   }
 
-  async getSingleUser(userId: number): Promise<APIResponse> {
-    return this.request.get(`${this.baseURL}/users/${userId}`, {
-      headers: this.getHeaders(),
+  async getProductById(id: string): Promise<APIResponse> {
+    return this.request.get(`${this.productsEndpoint}&id=${id}`, {
+      headers: this.getPublicHeaders(),
     });
   }
 
-  async createUser(payload: CreateUserPayload): Promise<APIResponse> {
-    return this.request.post(`${this.baseURL}/users`, {
-      data: payload,
-      headers: this.getHeaders(),
+  // -------------------------------
+  // WRITE (MANAGE KEY)
+  // -------------------------------
+
+  async createProduct(payload: ProductPayload): Promise<APIResponse> {
+    return this.request.post(this.productsEndpoint, {
+      data: {
+        data: payload, // ✅ FIX: wrap payload
+      },
+      headers: this.getManageHeaders(),
     });
   }
 
-  async updateUser(
-    userId: number,
-    payload: Partial<CreateUserPayload>
+  async updateProduct(
+    id: string,
+    payload: Partial<ProductPayload>
   ): Promise<APIResponse> {
-    return this.request.put(`${this.baseURL}/users/${userId}`, {
-      data: payload,
-      headers: this.getHeaders(),
+    return this.request.put(`${this.productsEndpoint}&id=${id}`, {
+      data: {
+        data: payload, // ✅ FIX
+      },
+      headers: this.getManageHeaders(),
     });
   }
 
-  async deleteUser(userId: number): Promise<APIResponse> {
-    return this.request.delete(`${this.baseURL}/users/${userId}`, {
-      headers: this.getHeaders(),
-    });
-  }
-
-  // -------------------------------
-  // AUTH
-  // -------------------------------
-
-  async login(payload: LoginPayload): Promise<APIResponse> {
-    return this.request.post(`${this.baseURL}/login`, {
-      data: payload,
-      headers: this.getHeaders(),
-    });
-  }
-
-  async register(payload: LoginPayload): Promise<APIResponse> {
-    return this.request.post(`${this.baseURL}/register`, {
-      data: payload,
-      headers: this.getHeaders(),
+  async deleteProduct(id: string): Promise<APIResponse> {
+    return this.request.delete(`${this.productsEndpoint}&id=${id}`, {
+      headers: this.getManageHeaders(),
     });
   }
 
