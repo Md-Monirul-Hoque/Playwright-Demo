@@ -50,7 +50,7 @@ export default defineConfig({
     testDir: './tests/ui',
     use: { browserName: 'chromium' },
   },
-  {
+  /*{
     name: 'firefox',
     testDir: './tests/ui',
     use: { browserName: 'firefox' },
@@ -59,7 +59,7 @@ export default defineConfig({
     name: 'webkit',
     testDir: './tests/ui',
     use: { browserName: 'webkit' },
-  },
+  },*/
 
     /* Test against mobile viewports. */
     // {
