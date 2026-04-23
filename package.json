@@ -1,7 +1,6 @@
 {
   "name": "playwright-demo",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {},
   "repository": {
@@ -17,7 +16,14 @@
   },
   "homepage": "https://github.com/Md-Monirul-Hoque/Playwright-Demo#readme",
   "devDependencies": {
-    "@playwright/test": "^1.58.2",
+    "@playwright/test": "^1.59.1",
     "@types/node": "^25.5.0"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.4.2"
   }
 }
